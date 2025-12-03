@@ -1,0 +1,20 @@
+{
+  "name": "cutdeck-workers",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "containers:list": "wrangler containers list",
+    "containers:images": "wrangler containers images list"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241127.0",
+    "typescript": "^5.6.3",
+    "wrangler": "^3.99.0"
+  },
+  "dependencies": {
+    "@cloudflare/containers": "^0.0.3"
+  }
+}

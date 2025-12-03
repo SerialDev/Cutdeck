@@ -1,0 +1,35 @@
+# Cloudflare Tunnel configuration
+# =============================================================================
+# SETUP INSTRUCTIONS:
+# 1. Run: ./launch.sh setup
+# 2. Replace <TUNNEL_ID> below with the ID from step 1
+# 3. Replace <YOUR_DOMAIN> with your actual domain
+# 4. Run: ./launch.sh tunnel
+# =============================================================================
+
+tunnel: <TUNNEL_ID>
+credentials-file: /root/.cloudflared/<TUNNEL_ID>.json
+
+ingress:
+  # ---------------------------------------------------------------------------
+  # Frontend - React 19 + TypeScript + Vite
+  # Routes all traffic for the main domain to the frontend container
+  # ---------------------------------------------------------------------------
+  - hostname: <YOUR_DOMAIN>
+    service: http://frontend:3000
+  
+  - hostname: www.<YOUR_DOMAIN>
+    service: http://frontend:3000
+
+  # ---------------------------------------------------------------------------
+  # Backend API - FastAPI + DaggyD
+  # Routes API subdomain traffic to the backend container
+  # ---------------------------------------------------------------------------
+  - hostname: api.<YOUR_DOMAIN>
+    service: http://backend:8000
+
+  # ---------------------------------------------------------------------------
+  # Catch-all rule (required by cloudflared)
+  # Returns 404 for any unmatched requests
+  # ---------------------------------------------------------------------------
+  - service: http_status:404

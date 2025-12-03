@@ -1,0 +1,74 @@
+# =============================================================================
+# Cutdeck Workers Configuration
+# =============================================================================
+# This configures the Cloudflare Worker and Container deployment.
+# 
+# Deploy with: wrangler deploy
+# =============================================================================
+
+name = "cutdeck"
+main = "src/index.ts"
+compatibility_date = "2024-12-03"
+
+# =============================================================================
+# Container Configuration - Backend (Python + DaggyD)
+# =============================================================================
+# The backend runs as a Container on Cloudflare's edge network.
+# This allows running Python/DaggyD workloads serverlessly.
+
+[[containers]]
+class_name = "BackendContainer"
+image = "../backend/Dockerfile"
+max_instances = 10
+
+# =============================================================================
+# Durable Objects Bindings
+# =============================================================================
+# Containers are backed by Durable Objects for state management.
+
+[[durable_objects.bindings]]
+name = "BACKEND_CONTAINER"
+class_name = "BackendContainer"
+
+# =============================================================================
+# Migrations
+# =============================================================================
+# Required for Durable Objects with SQLite storage.
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["BackendContainer"]
+
+# =============================================================================
+# KV Namespace Bindings (Image Storage)
+# =============================================================================
+# Uncomment and configure after creating KV namespace:
+# wrangler kv namespace create IMAGES
+#
+# [[kv_namespaces]]
+# binding = "IMAGES"
+# id = "<YOUR_KV_NAMESPACE_ID>"
+
+# =============================================================================
+# D1 Database Bindings
+# =============================================================================
+# Uncomment and configure after creating D1 database:
+# wrangler d1 create cutdeck-db
+#
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "cutdeck-db"
+# database_id = "<YOUR_D1_DATABASE_ID>"
+
+# =============================================================================
+# Environment Variables
+# =============================================================================
+[vars]
+ENVIRONMENT = "production"
+
+# =============================================================================
+# Development Settings
+# =============================================================================
+[dev]
+port = 8787
+local_protocol = "http"
